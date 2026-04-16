@@ -2,6 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import { getDagbokListItems, getDagbokEntry } from '../../lib/dagbok';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 export async function getStaticPaths() {
 	const items = await getDagbokListItems();
 	return items.map(({ slug }) => ({ params: { slug } }));
@@ -9,12 +11,12 @@ export async function getStaticPaths() {
 
 const slug = Astro.params.slug;
 if (!slug) {
-	return Astro.redirect('/mr-joys-dagbok');
+	return Astro.redirect(`${base}/mr-joys-dagbok`);
 }
 
 const entry = await getDagbokEntry(slug);
 if (!entry) {
-	return Astro.redirect('/mr-joys-dagbok');
+	return Astro.redirect(`${base}/mr-joys-dagbok`);
 }
 
 const { Content, frontmatter } = entry;
@@ -40,7 +42,7 @@ const description = frontmatter.description ?? `Dagbok: ${frontmatter.title}`;
 				<Content />
 			</div>
 			<p style="margin-top: 1.5rem;">
-				<a href="/mr-joys-dagbok">&larr; Tillbaka till dagboken</a>
+				<a href={`${base}/mr-joys-dagbok`}>&larr; Tillbaka till dagboken</a>
 			</p>
 		</article>
 	</main>

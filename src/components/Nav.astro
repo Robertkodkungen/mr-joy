@@ -1,25 +1,27 @@
 ---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 const links = [
-	{ href: '/', label: 'Hem' },
-	{ href: '/mr-joys-dagbok', label: 'Dagbok' },
-	{ href: '/om-mr-joy', label: 'Om' },
-	{ href: '/snacka-med-mr-joy', label: 'Snacka' },
+	{ href: `${base}/`, label: 'Hem' },
+	{ href: `${base}/mr-joys-dagbok`, label: 'Dagbok' },
+	{ href: `${base}/om-mr-joy`, label: 'Om' },
+	{ href: `${base}/snacka-med-mr-joy`, label: 'Snacka' },
 ];
 
 function isCurrent(href: string): boolean {
-	if (href === '/') return pathname === '/';
-	return pathname === href || pathname.startsWith(`${href}/`);
+	const clean = href.replace(/\/$/, '') || '/';
+	if (clean === base || clean === `${base}/`) return pathname === base || pathname === `${base}/`;
+	return pathname === clean || pathname.startsWith(`${clean}/`);
 }
 ---
 
 <nav class="site-nav" aria-label="Huvudmeny">
 	<div class="site-nav__inner">
-		<a class="site-nav__brand site-nav__brand--logo" href="/">
+		<a class="site-nav__brand site-nav__brand--logo" href={`${base}/`}>
 			<img
 				class="site-nav__brand-img"
-				src="/images/mr-joy-portrait.png"
+				src={`${base}/images/mr-joy-portrait.png`}
 				alt=""
 				width="48"
 				height="48"

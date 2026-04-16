@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getDagbokListItems } from '../../lib/dagbok';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const posts = await getDagbokListItems();
 ---
 
@@ -22,7 +23,7 @@ const posts = await getDagbokListItems();
 					<ul class="dagbok-list">
 						{posts.map((post) => (
 							<li>
-								<a href={`/mr-joys-dagbok/${post.slug}/`}>{post.title}</a>
+								<a href={`${base}/mr-joys-dagbok/${post.slug}/`}>{post.title}</a>
 								{post.description && <p class="dagbok-meta">{post.description}</p>}
 								<p class="dagbok-meta">
 									<time datetime={post.pubDate.toISOString()}>

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title="Mr.Joy" description="Hyllningssajt till Johnny Larsson — Mr.Joy.">
@@ -15,18 +16,18 @@ import Layout from '../layouts/Layout.astro';
 		<section aria-labelledby="nav-cards-heading">
 			<h2 id="nav-cards-heading" class="visually-hidden">Utforska sajten</h2>
 			<div class="card-grid">
-				<a class="n64-card" href="/mr-joys-dagbok">
-					Mr.Joys Dagbok
-					<span>Inlägg och tankar från legenden</span>
-				</a>
-				<a class="n64-card" href="/om-mr-joy">
-					Om Mr.Joy
-					<span>Biografi och fakta</span>
-				</a>
-				<a class="n64-card" href="/snacka-med-mr-joy">
-					Snacka med Mr.Joy
-					<span>Frågesport — gillar han dig?</span>
-				</a>
+			<a class="n64-card" href={`${base}/mr-joys-dagbok`}>
+				Mr.Joys Dagbok
+				<span>Inlägg och tankar från legenden</span>
+			</a>
+			<a class="n64-card" href={`${base}/om-mr-joy`}>
+				Om Mr.Joy
+				<span>Biografi och fakta</span>
+			</a>
+			<a class="n64-card" href={`${base}/snacka-med-mr-joy`}>
+				Snacka med Mr.Joy
+				<span>Frågesport — gillar han dig?</span>
+			</a>
 			</div>
 		</section>
 
@@ -34,7 +35,7 @@ import Layout from '../layouts/Layout.astro';
 			<div class="mr-joy-spin-wrap">
 				<img
 					class="mr-joy-spin"
-					src="/images/mr-joy-portrait.png"
+					src={`${base}/images/mr-joy-portrait.png`}
 					alt="Johnny Larsson, Mr.Joy"
 					width="320"
 					height="320"
