@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getDagbokListItems, getDagbokEntry } from '../../lib/dagbok';
+
+export async function getStaticPaths() {
+	const items = await getDagbokListItems();
+	return items.map(({ slug }) => ({ params: { slug } }));
+}
+
+const slug = Astro.params.slug;
+if (!slug) {
+	return Astro.redirect('/mr-joys-dagbok');
+}
+
+const entry = await getDagbokEntry(slug);
+if (!entry) {
+	return Astro.redirect('/mr-joys-dagbok');
+}
+
+const { Content, frontmatter } = entry;
+const description = frontmatter.description ?? `Dagbok: ${frontmatter.title}`;
+---
+
+<Layout title={frontmatter.title} description={description}>
+	<main class="site-main">
+		<article class="n64-panel dagbok-article">
+			<header>
+				<h1>{frontmatter.title}</h1>
+				<p class="dagbok-meta">
+					<time datetime={frontmatter.pubDate.toISOString()}>
+						{frontmatter.pubDate.toLocaleDateString('sv-SE', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric',
+						})}
+					</time>
+				</p>
+			</header>
+			<div class="prose">
+				<Content />
+			</div>
+			<p style="margin-top: 1.5rem;">
+				<a href="/mr-joys-dagbok">&larr; Tillbaka till dagboken</a>
+			</p>
+		</article>
+	</main>
+</Layout>

@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getDagbokListItems } from '../../lib/dagbok';
+
+const posts = await getDagbokListItems();
+---
+
+<Layout title="Mr.Joys Dagbok" description="Inlägg och tankar — Mr.Joys Dagbok.">
+	<main class="site-main">
+		<header class="n64-panel">
+			<h1>Mr.Joys Dagbok</h1>
+			<p>Små texter, stora känslor. Välj ett inlägg nedan.</p>
+		</header>
+
+		<section class="n64-panel dagbok-list-section" aria-label="Inläggslista">
+			{
+				posts.length === 0 ? (
+					<p class="dagbok-empty">
+						Inga inlägg hittades. Lägg <code>.md</code>-filer i <code>src/content/dagbok/</code>.
+					</p>
+				) : (
+					<ul class="dagbok-list">
+						{posts.map((post) => (
+							<li>
+								<a href={`/mr-joys-dagbok/${post.slug}/`}>{post.title}</a>
+								{post.description && <p class="dagbok-meta">{post.description}</p>}
+								<p class="dagbok-meta">
+									<time datetime={post.pubDate.toISOString()}>
+										{post.pubDate.toLocaleDateString('sv-SE', {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+										})}
+									</time>
+								</p>
+							</li>
+						))}
+					</ul>
+				)
+			}
+		</section>
+	</main>
+</Layout>

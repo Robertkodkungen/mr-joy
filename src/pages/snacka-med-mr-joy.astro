@@ -1,0 +1,257 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { quizQuestions } from '../data/mrJoyQuiz';
+---
+
+<Layout
+	title="Snacka med Mr.Joy"
+	description="Svara på frågor — se om Mr.Joy gillar dig eller inte."
+>
+	<main class="site-main">
+		<header class="n64-panel">
+			<h1>Snacka med Mr.Joy</h1>
+			<p>Välj svar med ärlighet. Mr.Joy ser allt — nästan.</p>
+			<p class="quiz-meter-help">
+				<strong>Så här gör du:</strong> I <strong>rutan under</strong> visas en fråga i taget. Läs den och
+				klicka på <strong>ett av de två svaren</strong>. När alla frågor är besvarade får du veta om Mr.Joy
+				gillar dig eller inte.
+			</p>
+		</header>
+
+		<div class="n64-panel" id="quiz-root">
+			<div id="quiz-active">
+				<p class="dagbok-meta" id="quiz-progress" aria-live="polite"></p>
+				<div class="quiz-mood-slider" id="quiz-mood-slider">
+					<div class="quiz-mood-slider__track">
+						<span class="quiz-mood-slider__zone quiz-mood-slider__zone--angry">Sur</span>
+						<span class="quiz-mood-slider__zone quiz-mood-slider__zone--happy">Glad</span>
+					</div>
+					<img
+						class="quiz-mood-slider__thumb"
+						id="quiz-mood-thumb"
+						src="/images/mr-joy-portrait.png"
+						alt="Mr.Joys humör"
+						width="52"
+						height="52"
+						draggable="false"
+					/>
+					<p class="quiz-mood-status" id="quiz-mood-status" aria-live="polite"></p>
+				</div>
+				<h2 id="quiz-question" style="font-size: 0.7rem; margin-bottom: 1rem;"></h2>
+				<div class="quiz-reaction-block" id="quiz-reaction-wrap" aria-live="polite" hidden>
+					<div class="quiz-reaction-row">
+						<img
+							class="quiz-reaction-avatar"
+							src="/images/mr-joy-portrait.png"
+							alt=""
+							width="64"
+							height="64"
+							loading="lazy"
+							decoding="async"
+						/>
+						<div class="quiz-speech-bubble">
+							<p class="quiz-reaction-text" id="quiz-reaction"></p>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="n64-btn n64-btn--quiz" id="quiz-btn-a"></button>
+				<button type="button" class="n64-btn n64-btn--quiz" id="quiz-btn-b"></button>
+			</div>
+
+			<div id="quiz-end" class="quiz-hidden">
+				<div class="quiz-verdict-bubble">
+					<div class="quiz-reaction-row">
+						<img
+							class="quiz-reaction-avatar"
+							src="/images/mr-joy-portrait.png"
+							alt=""
+							width="64"
+							height="64"
+						/>
+						<div class="quiz-speech-bubble">
+							<h2 id="quiz-verdict-title" style="font-size: 0.58rem; margin: 0 0 0.5rem;"></h2>
+							<p id="quiz-verdict-body" style="margin: 0;"></p>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="n64-btn" id="quiz-restart">Spela igen</button>
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<script define:vars={{ quizQuestions }}>
+	(function () {
+		const allQuestions = quizQuestions;
+		const ROUND_SIZE = 5;
+
+		const progressEl = document.getElementById('quiz-progress');
+		const questionEl = document.getElementById('quiz-question');
+		const reactionWrap = document.getElementById('quiz-reaction-wrap');
+		const reactionEl = document.getElementById('quiz-reaction');
+		const moodThumb = document.getElementById('quiz-mood-thumb');
+		const moodStatusEl = document.getElementById('quiz-mood-status');
+		const btnA = document.getElementById('quiz-btn-a');
+		const btnB = document.getElementById('quiz-btn-b');
+		const activeEl = document.getElementById('quiz-active');
+		const endEl = document.getElementById('quiz-end');
+		const verdictTitle = document.getElementById('quiz-verdict-title');
+		const verdictBody = document.getElementById('quiz-verdict-body');
+		const restartBtn = document.getElementById('quiz-restart');
+
+		if (
+			!progressEl ||
+			!questionEl ||
+			!reactionWrap ||
+			!reactionEl ||
+			!moodThumb ||
+			!moodStatusEl ||
+			!btnA ||
+			!btnB ||
+			!activeEl ||
+			!endEl ||
+			!verdictTitle ||
+			!verdictBody ||
+			!restartBtn
+		) {
+			return;
+		}
+
+		function shuffle(arr) {
+			const a = arr.slice();
+			for (let i = a.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[a[i], a[j]] = [a[j], a[i]];
+			}
+			return a;
+		}
+
+		function pick(arr) {
+			return arr[Math.floor(Math.random() * arr.length)];
+		}
+
+		let questions = [];
+		let index = 0;
+		let score = 0;
+
+		function moodDelta(mood) {
+			return mood === 'happy' ? 1 : -1;
+		}
+
+		const moodLabels = [
+			'Mr.Joy: rödögd — du är på tunn is.',
+			'Mr.Joy: surkäft och kort i tonen.',
+			'Mr.Joy: neutral — än så länge.',
+			'Mr.Joy: börjar gilla läget.',
+			'Mr.Joy: nästan stolt över dig.',
+		];
+
+		const happyVerdicts = [
+			'Du fattar grejen. Hjärtat sitter rätt, smaken likaså. Välkommen in — vi har en plats åt dig nära bänken.',
+			'Imponerad. Du har koll. Om jag hade ett lag till hade du fått vara kapten — nästan.',
+			'Det här var rätt svar på rätt svar. Du får stanna. Men glöm inte vem som bestämmer.',
+			'Äntligen någon som ser storheten. Jag visste att det fanns vettiga människor kvar.',
+		];
+
+		const angryVerdicts = [
+			'Jag vet inte ens vad jag ska säga. Du svarar som Rickard spelar — helt utan känsla. Gå hem och tänk om.',
+			'Det här var pinsamt — för dig. Rickard hade svarat likadant, och det säger allt.',
+			'Fel på fel på fel. Du och Rickard borde starta en egen klubb för folk som inte fattar.',
+			'Du hade en chans och du slösade bort den. Precis som Rickard gör varje match.',
+		];
+
+		const neutralVerdicts = [
+			'Du är varken bra eller dålig — lite som en 0–0-match i regn. Jag ger dig en chans till, men gör inte bort dig.',
+			'Mittenbetyg. Inte illa, inte bra. Som en passning som landar lite lagom — ingen jublar, ingen klagar.',
+			'Jag kan inte riktigt placera dig. Du är som en inhoppare i minut 89 — okej, men inget man minns.',
+			'Halvt godkänt. Du slipper undan den här gången, men nästa omgång vill jag se mer.',
+		];
+
+		function updateMoodStatus() {
+			const t = (score + ROUND_SIZE) / (2 * ROUND_SIZE);
+			const clamped = Math.max(0, Math.min(1, t));
+			const i = Math.round(clamped * (moodLabels.length - 1));
+			moodStatusEl.textContent = moodLabels[i];
+			const pct = clamped * 100;
+			moodThumb.style.left = pct + '%';
+		}
+
+		function hideReaction() {
+			reactionEl.textContent = '';
+			reactionWrap.hidden = true;
+		}
+
+		function reactionReadDelayMs(text) {
+			const n = text.length;
+			return Math.min(9000, Math.max(2600, 900 + n * 72));
+		}
+
+		function showQuestion() {
+			hideReaction();
+			const q = questions[index];
+			progressEl.textContent = `Fråga ${index + 1} av ${ROUND_SIZE}`;
+			questionEl.textContent = q.question;
+			btnA.textContent = q.optionA.text;
+			btnB.textContent = q.optionB.text;
+			updateMoodStatus();
+		}
+
+		function finish() {
+			activeEl.classList.add('quiz-hidden');
+			endEl.classList.remove('quiz-hidden');
+
+			if (score >= 2) {
+				verdictTitle.textContent = 'Mr.Joy gillar dig!';
+				verdictBody.textContent = pick(happyVerdicts);
+			} else if (score <= -2) {
+				verdictTitle.textContent = 'Mr.Joy gillar dig inte.';
+				verdictBody.textContent = pick(angryVerdicts);
+			} else {
+				verdictTitle.textContent = 'Mr.Joy är osäker på dig.';
+				verdictBody.textContent = pick(neutralVerdicts);
+			}
+		}
+
+		function startRound() {
+			questions = shuffle(allQuestions).slice(0, ROUND_SIZE);
+			index = 0;
+			score = 0;
+			showQuestion();
+		}
+
+		function onAnswer(option) {
+			const q = questions[index];
+			const chosen = option === 'a' ? q.optionA : q.optionB;
+			score += moodDelta(chosen.mood);
+			reactionEl.textContent = chosen.reaction;
+			reactionWrap.hidden = false;
+			updateMoodStatus();
+
+			btnA.disabled = true;
+			btnB.disabled = true;
+
+			const delay = reactionReadDelayMs(chosen.reaction);
+			window.setTimeout(() => {
+				btnA.disabled = false;
+				btnB.disabled = false;
+				index += 1;
+				if (index >= questions.length) {
+					finish();
+					return;
+				}
+				showQuestion();
+			}, delay);
+		}
+
+		btnA.addEventListener('click', () => onAnswer('a'));
+		btnB.addEventListener('click', () => onAnswer('b'));
+
+		restartBtn.addEventListener('click', () => {
+			endEl.classList.add('quiz-hidden');
+			activeEl.classList.remove('quiz-hidden');
+			startRound();
+		});
+
+		startRound();
+	})();
+</script>

@@ -1,11 +1,61 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Mr.Joy" description="Hyllningssajt till Johnny Larsson — Mr.Joy.">
+	<main class="site-main">
+		<section class="n64-panel n64-panel--hero" aria-labelledby="hero-heading">
+			<h1 id="hero-heading">Välkommen till Mr.Joy</h1>
+			<p>
+				Det här är en hyllning till fotbollsspelaren <strong>Johnny Larsson</strong>, känd som
+				<strong>Mr.Joy</strong>.
+			</p>
+		</section>
+
+		<section aria-labelledby="nav-cards-heading">
+			<h2 id="nav-cards-heading" class="visually-hidden">Utforska sajten</h2>
+			<div class="card-grid">
+				<a class="n64-card" href="/mr-joys-dagbok">
+					Mr.Joys Dagbok
+					<span>Inlägg och tankar från legenden</span>
+				</a>
+				<a class="n64-card" href="/om-mr-joy">
+					Om Mr.Joy
+					<span>Biografi och fakta</span>
+				</a>
+				<a class="n64-card" href="/snacka-med-mr-joy">
+					Snacka med Mr.Joy
+					<span>Frågesport — gillar han dig?</span>
+				</a>
+			</div>
+		</section>
+
+		<section class="home-mrjoy-photo" aria-label="Mr.Joy">
+			<div class="mr-joy-spin-wrap">
+				<img
+					class="mr-joy-spin"
+					src="/images/mr-joy-portrait.png"
+					alt="Johnny Larsson, Mr.Joy"
+					width="320"
+					height="320"
+					loading="lazy"
+					decoding="async"
+				/>
+			</div>
+		</section>
+	</main>
 </Layout>
+
+<style>
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>
