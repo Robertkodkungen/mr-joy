@@ -1,0 +1,147 @@
+---
+import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title="Butik — Mr.Joy" description="Exklusiva Mr.Joy-produkter. Begränsad upplaga.">
+	<main class="site-main">
+		<header class="n64-panel">
+			<h1>Butik</h1>
+			<p>Exklusiva produkter från Mr.Joy-universumet. Begränsad upplaga.</p>
+		</header>
+
+		<section class="n64-panel shop-product" aria-labelledby="product-heading">
+			<div class="shop-product__layout">
+				<div class="shop-product__image-wrap">
+					<img
+						class="shop-product__image"
+						src={`${base}/images/johnny-kortet.png`}
+						alt="Johnny-kortet — samlarkort med Johnny Larsson"
+						width="380"
+						height="530"
+						loading="lazy"
+						decoding="async"
+					/>
+				</div>
+				<div class="shop-product__info">
+					<h2 id="product-heading" class="shop-product__title">Johnny-kortet</h2>
+					<p class="shop-product__subtitle">First Edition 2025 — FGOIK 091</p>
+					<p class="shop-product__desc">
+						Det officiella samlarkortet. 300 i attack, 300 i Drömduon, och en pratbubbla som
+						säger allt: <strong>"Jag vann skytteligan!"</strong>
+					</p>
+					<p class="shop-product__desc">
+						Egoistiskt Dribbling, svagheter i frilägen och passningar — allt finns med.
+						Tryckt på premium guldkartong. Numrerad upplaga.
+					</p>
+					<div class="shop-product__price-row">
+						<span class="shop-product__price">299 kr</span>
+						<span class="shop-product__price-old">499 kr</span>
+					</div>
+					<div class="shop-product__soldout">
+						<button type="button" class="n64-btn shop-product__btn" disabled>
+							Slutsåld
+						</button>
+						<p class="shop-product__soldout-text">
+							Hela upplagan gick åt på under 4 minuter. Precis som Johnnys sololöpningar.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.shop-product__layout {
+		display: flex;
+		gap: 2rem;
+		align-items: flex-start;
+	}
+
+	.shop-product__image-wrap {
+		flex-shrink: 0;
+		width: min(280px, 45%);
+	}
+
+	.shop-product__image {
+		width: 100%;
+		height: auto;
+		border: 3px solid var(--n64-border-dark);
+		box-shadow:
+			inset 1px 1px 0 var(--n64-border-light),
+			4px 4px 0 var(--n64-shadow);
+	}
+
+	.shop-product__info {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.shop-product__title {
+		font-size: 0.72rem;
+		margin: 0 0 0.35rem;
+	}
+
+	.shop-product__subtitle {
+		font-family: var(--font-pixel);
+		font-size: 0.38rem;
+		color: var(--n64-text-muted);
+		margin: 0 0 1rem;
+		letter-spacing: 0.04em;
+	}
+
+	.shop-product__desc {
+		margin: 0 0 0.75rem;
+		line-height: 1.5;
+	}
+
+	.shop-product__price-row {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		margin: 1rem 0 1.25rem;
+	}
+
+	.shop-product__price {
+		font-family: var(--font-pixel);
+		font-size: 0.65rem;
+		color: var(--n64-text);
+	}
+
+	.shop-product__price-old {
+		font-family: var(--font-pixel);
+		font-size: 0.45rem;
+		color: var(--n64-text-muted);
+		text-decoration: line-through;
+	}
+
+	.shop-product__soldout {
+		margin-top: 0.5rem;
+	}
+
+	.shop-product__btn {
+		opacity: 0.55;
+		cursor: not-allowed;
+		font-size: 0.52rem;
+	}
+
+	.shop-product__soldout-text {
+		font-family: var(--font-pixel);
+		font-size: 0.38rem;
+		line-height: 1.6;
+		color: var(--n64-accent-red);
+		margin: 0.65rem 0 0;
+	}
+
+	@media (max-width: 36rem) {
+		.shop-product__layout {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.shop-product__image-wrap {
+			width: min(300px, 80%);
+		}
+	}
+</style>
